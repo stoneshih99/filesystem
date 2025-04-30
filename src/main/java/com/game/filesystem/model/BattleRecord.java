@@ -129,24 +129,14 @@ public class BattleRecord implements Serializable {
      */
     public static long parseExpirationTimeFromFileName(String fileName) {
         try {
-            String timeStr = fileName.substring(fileName.lastIndexOf('&') + 1, fileName.lastIndexOf('.'));
-            try {
-                // 嘗試補齊時間格式，例如 12-1 -> 12-01
-                String[] timeParts = timeStr.split("-");
-                if (timeParts.length == 3) {
-                    if (timeParts[1].length() == 1) timeParts[1] = "0" + timeParts[1]; // 補齊分鐘
-                    if (timeParts[2].length() == 1) timeParts[2] = "0" + timeParts[2]; // 補齊秒數
-                    timeStr = String.join("-", timeParts);
-                }
-                // 嘗試解析為日期時間格式
-                LocalDateTime expirationDateTime = LocalDateTime.parse(timeStr, DATE_TIME_FORMATTER);
-                return expirationDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-            } catch (DateTimeParseException e) {
-                // 如果解析失敗，可能是舊格式的時間戳
-                return Long.parseLong(timeStr);
-            }
+            String timeStr = fileName.substring(fileName.lastIndexOf('?') + 1, fileName.lastIndexOf('.'));
+            System.out.println("Parsing time string: " + timeStr);
+            LocalDateTime expirationDateTime = LocalDateTime.parse(timeStr, DATE_TIME_FORMATTER);
+            return expirationDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("無效的檔案名稱格式: " + fileName, e);
         } catch (Exception e) {
-            throw new IllegalArgumentException("無效的檔案名稱格式: " + fileName + ", 錯誤: " + e.getMessage());
+            throw new IllegalArgumentException("無效的檔案名稱格式: " + fileName, e);
         }
     }
 
