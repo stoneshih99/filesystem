@@ -1,0 +1,36 @@
+# 檔案系統配置
+storage:
+  # 戰鬥記錄檔案的儲存路徑（測試用）
+  path: "test-storage/battles"
+  
+  # 檔案過期設定
+  expiration:
+    # 預設過期時間（天）
+    days: 1
+    
+    # 是否啟用自動清理
+    enableAutoCleanup: true
+    
+    # 自動清理的執行間隔（小時）
+    cleanupIntervalHours: 1
+
+# 執行緒設定
+thread:
+  # 檔案讀取執行緒池大小
+  fileLoaderPoolSize: 2
+  
+  # 最小執行緒數
+  minThreads: 1
+  
+  # 最大執行緒數
+  maxThreads: 2
+  
+  # 執行緒閒置超時時間（秒）
+  keepAliveSeconds: 30
+
+# 日誌設定
+logging:
+  # 日誌檔案路徑
+  path: "test-logs/filesystem.log"
+  # 日誌等級
+  level: "INFO" 

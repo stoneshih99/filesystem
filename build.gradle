@@ -1,0 +1,62 @@
+plugins {
+    id 'java-library'
+}
+
+group = 'com.100f.filesystem'
+version = '1.0.0'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+    withSourcesJar()
+    withJavadocJar()
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.yaml:snakeyaml:1.29'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testImplementation 'org.mockito:mockito-core:3.12.4'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.register('copyJarToLib', Copy) {
+    dependsOn build
+
+    doFirst {
+        println "開始複製 JAR 檔案到 lib 目錄..."
+        // 確保 lib 目錄存在
+        def libDir = layout.projectDirectory.dir("lib")
+        if (!libDir.asFile.exists()) {
+            libDir.asFile.mkdirs()
+            println "建立 lib 目錄"
+        }
+    }
+
+    from layout.buildDirectory.dir("libs")
+    into layout.projectDirectory.dir("lib")
+
+    include '*.jar'
+    // 排除 sources 和 javadoc JAR
+    exclude '*-sources.jar', '*-javadoc.jar'
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
+    rename { String fileName ->
+        def baseName = project.name
+        def newName = "${baseName}-${version}.jar"
+        println "重新命名 ${fileName} 為 ${newName}"
+        return newName
+    }
+
+    doLast {
+        println "JAR 檔案複製完成"
+    }
+}
